@@ -91,6 +91,8 @@ fun HomeScreen(
     val income = viewModel.getTotalIncome(state.value)
     val balance = viewModel.getBalance(state.value)
 
+    println("enter into this composable")
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFF8F9FB)
