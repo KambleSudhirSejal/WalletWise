@@ -3,7 +3,7 @@
 A modern Android application to manage daily finances by tracking income and expenses.  
 Built using **Jetpack Compose** and **MVVM architecture**, the app focuses on clean design, smooth performance, and maintainable code structure.
 
----
+
 
 ## 🚀 Features
 
@@ -14,7 +14,7 @@ Built using **Jetpack Compose** and **MVVM architecture**, the app focuses on cl
 - ⚡ Real-time UI updates  
 - 💾 Offline data storage  
 
----
+
 
 ## 🛠️ Tech Stack
 
@@ -26,7 +26,7 @@ Built using **Jetpack Compose** and **MVVM architecture**, the app focuses on cl
 - **StateFlow / Flow**
 - **Navigation Component**
 
----
+
 
 ## 📱 UI Highlights
 
@@ -35,7 +35,7 @@ Built using **Jetpack Compose** and **MVVM architecture**, the app focuses on cl
 - Smooth animations and interactions  
 - User-friendly input flow  
 
----
+
 
 ## 🏗️ Architecture
 
@@ -50,7 +50,7 @@ The project follows **MVVM (Model-View-ViewModel)** architecture:
 **Sejal Kamble**  
 Android Developer  
 
----
+
 
 ## ⭐ Conclusion
 
