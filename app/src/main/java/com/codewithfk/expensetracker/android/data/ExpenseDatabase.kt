@@ -16,7 +16,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 
-@Database(entities = [ExpenseEntity::class], version = 2, exportSchema = false)
+@Database(entities = [ExpenseEntity::class], version = 3, exportSchema = false)
 @Singleton
 abstract class ExpenseDatabase : RoomDatabase() {
 
@@ -36,11 +36,20 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     DATABASE_NAME
                 )
                     .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
                 instance
             }
         }
+    }
+}
+
+val MIGRATION_2_3 = object :Migration(2,3){
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "ALTER TABLE expense_table ADD COLUMN description TEXT NOT NULL DEFAULT ''"
+        )
     }
 }
 

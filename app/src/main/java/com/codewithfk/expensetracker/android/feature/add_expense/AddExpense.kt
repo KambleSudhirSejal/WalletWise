@@ -178,6 +178,11 @@ fun DataForm(
     val dateDialogVisibility = remember {
         mutableStateOf(false)
     }
+
+
+    val notes = remember {
+        mutableStateOf("")
+    }
     val type = remember {
         mutableStateOf(if (isIncome) "Income" else "Expense")
     }
@@ -226,6 +231,28 @@ fun DataForm(
             onItemSelected = {
                 name.value = it
             })
+        Spacer(modifier = Modifier.size(24.dp))
+
+        TitleComponent("description")
+        OutlinedTextField(
+            value = notes.value,
+            onValueChange = {
+                newValue ->
+                notes.value = newValue
+            },
+            textStyle = TextStyle(color = Color.Black),
+
+            modifier = Modifier.fillMaxWidth(),
+
+            placeholder = { ExpenseTextView(text = "Enter Description") },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black,
+                disabledBorderColor = Color.Black, disabledTextColor = Color.Black,
+                disabledPlaceholderColor = Color.Black,
+                focusedTextColor = Color.Black,
+            )
+        )
         Spacer(modifier = Modifier.size(24.dp))
         TitleComponent("amount")
         OutlinedTextField(
@@ -279,6 +306,7 @@ fun DataForm(
                 val model = ExpenseEntity(
                     null,
                     name.value,
+                          notes.value,
                     amount.value.toDoubleOrNull() ?: 0.0,
                     Utils.formatDateToHumanReadableForm(date.longValue),
                     type.value
