@@ -92,6 +92,7 @@ fun AddExpense(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 })
+            println("hello")
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 64.dp, start = 16.dp, end = 16.dp)
