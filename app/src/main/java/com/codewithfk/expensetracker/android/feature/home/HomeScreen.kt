@@ -21,10 +21,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +49,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.codewithfk.expensetracker.android.data.model.ExpenseEntity
 import com.codewithfk.expensetracker.android.ui.theme.Zinc
@@ -75,10 +80,16 @@ fun HomeScreen(
                 HomeNavigationEvent.NavigateToSeeAll -> {
                     navController.navigate("/all_transactions")
                 }
-                HomeNavigationEvent.NavigateToAddIncome -> {
+               is HomeNavigationEvent.NavigateToAddIncome -> {
+
+                    navController.currentBackStackEntry?.savedStateHandle?.set("expense",event.item)
+
                     navController.navigate("/add_income")
                 }
-                HomeNavigationEvent.NavigateToAddExpense -> {
+               is HomeNavigationEvent.NavigateToAddExpense -> {
+                    navController.currentBackStackEntry?.savedStateHandle?.set("expense",
+                        event.item
+                    )
                     navController.navigate("/add_exp")
                 }
                 else -> {}
@@ -172,10 +183,18 @@ fun HomeScreen(
                         bottom.linkTo(parent.bottom)
                         height = Dimension.fillToConstraints
                     },
-                list = state.value
-            ) {
-                viewModel.onEvent(HomeUiEvent.OnSeeAllClicked)
-            }
+                list = state.value,
+                onSeeAllClicked = {
+                    viewModel.onEvent(HomeUiEvent.OnSeeAllClicked)
+                },
+                onEditClick = {item->
+                    viewModel.onEvent(HomeUiEvent.OnEditClicked(item))
+
+                },
+                onDeleteClick = {item->
+                    viewModel.onEvent(HomeUiEvent.OnDeleteClicked(item))
+                }
+            )
 
             // 🔹 FAB
             Box(
@@ -340,7 +359,10 @@ fun TransactionList(
     modifier: Modifier,
     list: List<ExpenseEntity>,
     title: String = "Recent Transactions",
-    onSeeAllClicked: () -> Unit
+    onSeeAllClicked: () -> Unit,
+    onEditClick:(ExpenseEntity)->Unit,
+    onDeleteClick:(ExpenseEntity)->Unit
+
 ) {
     LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
         item {
@@ -376,7 +398,11 @@ fun TransactionList(
                 icon = icon,
                 date = Utils.formatStringDateToMonthDayYear(item.date),
                 color = if (item.type == "Income") Green else Red,
-                Modifier
+                Modifier,
+                onEditClick={onEditClick(item)},
+                onDeleteClick = {onDeleteClick(item)}
+
+
             )
         }
     }
@@ -389,8 +415,14 @@ fun TransactionItem(
     icon: Int,
     date: String,
     color: Color,
-    modifier: Modifier
+    modifier: Modifier,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit
+
+
 ) {
+
+    var expanded by remember {mutableStateOf(false)}
 
     Box(
         modifier = modifier
@@ -410,13 +442,52 @@ fun TransactionItem(
                 ExpenseTextView(text = date, fontSize = 13.sp, color = LightGrey)
             }
         }
-        ExpenseTextView(
-            text = amount,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.align(Alignment.CenterEnd),
-            color = color
-        )
+
+
+        Row(modifier = Modifier.align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically){
+
+            ExpenseTextView(
+                text = amount,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+
+                color = color
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Icon(
+                painter = painterResource(id = R.drawable.dots_menu),
+                contentDescription = null,
+                modifier= Modifier.size(20.dp)
+                    .clickable{expanded = true}
+            )
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {expanded = false}
+            ) {
+                DropdownMenuItem(
+                    text = {Text("Edit")},
+                    onClick = {
+                        expanded = false
+                        onEditClick()
+                    }
+
+                )
+
+                DropdownMenuItem(
+                    text = {Text("Delete")},
+                    onClick = {
+                        expanded = false
+                        onDeleteClick()
+                    }
+
+                )
+            }
+
+        }
+
     }
 }
 

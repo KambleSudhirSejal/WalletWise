@@ -39,6 +39,17 @@ class AddExpenseViewModel @Inject constructor(val dao: ExpenseDao) : BaseViewMod
                 }
             }
 
+            // ✅ NEW UPDATE BLOCK
+            is AddExpenseUiEvent.OnUpdateExpenseClicked -> {
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        dao.updateExpense(event.expenseEntity)
+                        _navigationEvent.emit(NavigationEvent.NavigateBack)
+                    }
+                }
+            }
+
+
             is AddExpenseUiEvent.OnBackPressed -> {
                 viewModelScope.launch {
                     _navigationEvent.emit(NavigationEvent.NavigateBack)
@@ -56,6 +67,8 @@ class AddExpenseViewModel @Inject constructor(val dao: ExpenseDao) : BaseViewMod
 
 sealed class AddExpenseUiEvent : UiEvent() {
     data class OnAddExpenseClicked(val expenseEntity: ExpenseEntity) : AddExpenseUiEvent()
+
+    data class OnUpdateExpenseClicked(val expenseEntity: ExpenseEntity) : AddExpenseUiEvent()
     object OnBackPressed : AddExpenseUiEvent()
     object OnMenuClicked : AddExpenseUiEvent()
 }

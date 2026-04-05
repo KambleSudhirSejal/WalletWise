@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -70,6 +71,26 @@ fun AddExpense(
     isIncome: Boolean,
     viewModel: AddExpenseViewModel = hiltViewModel()
 ) {
+
+    val expenseState = remember {mutableStateOf<ExpenseEntity?>(null)}
+
+    LaunchedEffect(Unit) {
+        expenseState.value = navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.get<ExpenseEntity>("expense")
+
+
+        navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.remove<ExpenseEntity>("expense")
+    }
+
+    val expense = expenseState.value
+
+
+
+
+
     val menuExpanded = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { event ->
@@ -153,9 +174,19 @@ fun AddExpense(
                 top.linkTo(nameRow.bottom)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-            }, onAddExpenseClick = {
-                viewModel.onEvent(AddExpenseUiEvent.OnAddExpenseClicked(it))
-            }, isIncome)
+            },
+
+                onAddExpenseClick = { model->
+
+                    if (expense == null) {
+
+                        viewModel.onEvent(AddExpenseUiEvent.OnAddExpenseClicked(model))
+                    }else{
+                        viewModel.onEvent(AddExpenseUiEvent.OnUpdateExpenseClicked(model))
+                    }
+            }, isIncome,
+                existingExpense = expense
+               )
         }
     }
 }
@@ -164,29 +195,62 @@ fun AddExpense(
 fun DataForm(
     modifier: Modifier,
     onAddExpenseClick: (model: ExpenseEntity) -> Unit,
-    isIncome: Boolean
+    isIncome: Boolean,
+    existingExpense: ExpenseEntity?= null
 ) {
 
-    val name = remember {
-        mutableStateOf("")
+    val name = remember { mutableStateOf("") }
+    val amount = remember { mutableStateOf("") }
+    val notes = remember { mutableStateOf("") }
+    val type = remember { mutableStateOf(if (isIncome) "Income" else "Expense") }
+    val date = remember { mutableLongStateOf(0L) }
+
+    LaunchedEffect(existingExpense) {
+        existingExpense?.let {
+
+            name.value = it.title
+            notes.value = it.description
+
+            amount.value = if (it.amount % 1 == 0.0)
+                it.amount.toInt().toString()
+            else
+                it.amount.toString()
+
+            type.value = it.type
+
+            date.longValue = Utils.getMillisFromDate(it.date)
+        }
     }
-    val amount = remember {
-        mutableStateOf("")
-    }
-    val date = remember {
-        mutableLongStateOf(0L)
-    }
+
+//    val name = remember {
+//        mutableStateOf(existingExpense?.title ?: "")
+//    }
+//    val amount = remember {
+//        mutableStateOf(
+//            existingExpense?.amount?.let {
+//                if (it % 1 == 0.0) it.toInt().toString()
+//                else it.toString()
+//            } ?: ""
+//        )
+//    }
+//    val date = remember {
+//        mutableLongStateOf(
+//            existingExpense?.let{
+//                Utils.getMillisFromDate(it.date)
+//            }?: 0L
+//        )
+//    }
     val dateDialogVisibility = remember {
         mutableStateOf(false)
     }
-
-
-    val notes = remember {
-        mutableStateOf("")
-    }
-    val type = remember {
-        mutableStateOf(if (isIncome) "Income" else "Expense")
-    }
+//
+//
+//    val notes = remember {
+//        mutableStateOf(existingExpense?.description ?:"")
+//    }
+//    val type = remember {
+//        mutableStateOf(existingExpense?.type ?: if (isIncome) "Income" else "Expense")
+//    }
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -229,6 +293,7 @@ fun DataForm(
                 "Travel",
                 "Other Expenses"
             ),
+            selectedValue = name.value,
             onItemSelected = {
                 name.value = it
             })
@@ -256,36 +321,45 @@ fun DataForm(
         )
         Spacer(modifier = Modifier.size(24.dp))
         TitleComponent("amount")
+
         OutlinedTextField(
             value = amount.value,
             onValueChange = { newValue ->
                 amount.value = newValue.filter { it.isDigit() || it == '.' }
-            }, textStyle = TextStyle(color = Color.Black),
-            visualTransformation = { text ->
-                val out = "₹ " + text.text
-                val currencyOffsetTranslator = object : OffsetMapping {
-                    override fun originalToTransformed(offset: Int): Int {
-                        return offset + 2
-                    }
-
-                    override fun transformedToOriginal(offset: Int): Int {
-                        return if (offset > 1) offset - 2 else 0
-                    }
-                }
-
-                TransformedText(AnnotatedString(out), currencyOffsetTranslator)
             },
-            modifier = Modifier.fillMaxWidth(),
+            prefix = { Text("₹ ") },   // ✅ safe
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            placeholder = { ExpenseTextView(text = "Enter amount") },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                disabledBorderColor = Color.Black, disabledTextColor = Color.Black,
-                disabledPlaceholderColor = Color.Black,
-                focusedTextColor = Color.Black,
-            )
         )
+//        OutlinedTextField(
+//            value = amount.value,
+//            onValueChange = { newValue ->
+//                amount.value = newValue.filter { it.isDigit() || it == '.' }
+//            }, textStyle = TextStyle(color = Color.Black),
+//            visualTransformation = { text ->
+//                val out =  text.text
+//                val currencyOffsetTranslator = object : OffsetMapping {
+//                    override fun originalToTransformed(offset: Int): Int {
+//                        return offset + 2
+//                    }
+//
+//                    override fun transformedToOriginal(offset: Int): Int {
+//                        return if (offset > 1) offset - 2 else 0
+//                    }
+//                }
+//
+//                TransformedText(AnnotatedString(out), currencyOffsetTranslator)
+//            },
+//            modifier = Modifier.fillMaxWidth(),
+//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+//            placeholder = { ExpenseTextView(text = "Enter amount") },
+//            colors = OutlinedTextFieldDefaults.colors(
+//                focusedBorderColor = Color.Black,
+//                unfocusedBorderColor = Color.Black,
+//                disabledBorderColor = Color.Black, disabledTextColor = Color.Black,
+//                disabledPlaceholderColor = Color.Black,
+//                focusedTextColor = Color.Black,
+//            )
+//        )
         Spacer(modifier = Modifier.size(24.dp))
         TitleComponent("date")
         OutlinedTextField(value = if (date.longValue == 0L) "" else Utils.formatDateToHumanReadableForm(
@@ -304,19 +378,34 @@ fun DataForm(
         Spacer(modifier = Modifier.size(24.dp))
         Button(
             onClick = {
-                val model = ExpenseEntity(
-                    null,
-                    name.value,
-                          notes.value,
-                    amount.value.toDoubleOrNull() ?: 0.0,
-                    Utils.formatDateToHumanReadableForm(date.longValue),
-                    type.value
-                )
+
+                val model = if (existingExpense != null) {
+                    ExpenseEntity(
+                        id = existingExpense.id,   // ✅ force id
+                        title = name.value,
+                        description = notes.value,
+                        amount = amount.value.toDoubleOrNull() ?: 0.0,
+                        date = Utils.formatDateToHumanReadableForm(date.longValue),
+                        type = type.value
+                    )
+                } else {
+                    ExpenseEntity(
+                        id = null,
+                        title = name.value,
+                        description = notes.value,
+                        amount = amount.value.toDoubleOrNull() ?: 0.0,
+                        date = Utils.formatDateToHumanReadableForm(date.longValue),
+                        type = type.value
+                    )
+                }
                 onAddExpenseClick(model)
             }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(8.dp)
         ) {
             ExpenseTextView(
-                text = "Add ${if (isIncome) "Income" else "Expense"}",
+                text = if (existingExpense == null)
+                    "Add ${if (isIncome) "Income" else "Expense"}"
+                else
+                    "Edit ${if (isIncome) "Income" else "Expense"}",
                 fontSize = 14.sp,
                 color = Color.White
             )
@@ -364,12 +453,18 @@ fun TitleComponent(title: String) {
 }
 
 @Composable
-fun ExpenseDropDown(listOfItems: List<String>, onItemSelected: (item: String) -> Unit) {
+fun ExpenseDropDown(listOfItems: List<String>,
+                    selectedValue:String,
+                    onItemSelected: (item: String) -> Unit) {
     val expanded = remember {
         mutableStateOf(false)
     }
     val selectedItem = remember {
-        mutableStateOf(listOfItems[0])
+        mutableStateOf(selectedValue)
+    }
+
+    LaunchedEffect(selectedValue) {
+        selectedItem.value = selectedValue
     }
     ExposedDropdownMenuBox(expanded = expanded.value, onExpandedChange = { expanded.value = it }) {
         OutlinedTextField(

@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.codewithfk.expensetracker.android.R
 import com.codewithfk.expensetracker.android.feature.add_expense.ExpenseDropDown
+import com.codewithfk.expensetracker.android.feature.home.HomeUiEvent
 import com.codewithfk.expensetracker.android.feature.home.TransactionItem
 import com.codewithfk.expensetracker.android.utils.Utils
 import com.codewithfk.expensetracker.android.feature.home.HomeViewModel
@@ -117,6 +118,7 @@ fun TransactionListScreen(navController: NavController, viewModel: HomeViewModel
                             // Type Filter Dropdown
                             ExpenseDropDown(
                                 listOfItems = listOf("All", "Expense", "Income"),
+                                selectedValue = "",
                                 onItemSelected = { selected ->
                                     filterType = selected
                                     menuExpanded = false // Close menu after selection
@@ -128,6 +130,7 @@ fun TransactionListScreen(navController: NavController, viewModel: HomeViewModel
                             // Date Range Filter Dropdown
                             ExpenseDropDown(
                                 listOfItems = listOf( "Yesterday", "Today", "Last 30 Days", "Last 90 Days", "Last Year"),
+                                selectedValue = "",
                                 onItemSelected = { selected ->
                                     dateRange = selected
                                     menuExpanded = false // Close menu after selection
@@ -144,7 +147,13 @@ fun TransactionListScreen(navController: NavController, viewModel: HomeViewModel
                         icon = icon!!,
                         date = item.date,
                         color = if (item.type == "Income") Color.Green else Color.Red,
-                        Modifier.animateItemPlacement(tween(100))
+                        Modifier.animateItemPlacement(tween(100)),
+                        onEditClick = {
+
+                        },
+                        onDeleteClick = {
+
+                        }
                     )
                 }
             }

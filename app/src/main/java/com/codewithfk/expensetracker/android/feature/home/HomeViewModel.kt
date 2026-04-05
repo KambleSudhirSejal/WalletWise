@@ -19,13 +19,13 @@ class HomeViewModel @Inject constructor(val dao: ExpenseDao) : BaseViewModel() {
         when (event) {
             is HomeUiEvent.OnAddExpenseClicked -> {
                 viewModelScope.launch {
-                    _navigationEvent.emit(HomeNavigationEvent.NavigateToAddExpense)
+                    _navigationEvent.emit(HomeNavigationEvent.NavigateToAddExpense(null))
                 }
             }
 
             is HomeUiEvent.OnAddIncomeClicked -> {
                 viewModelScope.launch {
-                    _navigationEvent.emit(HomeNavigationEvent.NavigateToAddIncome)
+                    _navigationEvent.emit(HomeNavigationEvent.NavigateToAddIncome(null))
                 }
             }
 
@@ -33,6 +33,29 @@ class HomeViewModel @Inject constructor(val dao: ExpenseDao) : BaseViewModel() {
                 viewModelScope.launch {
                     _navigationEvent.emit(HomeNavigationEvent.NavigateToSeeAll)
                 }
+            }
+
+            is HomeUiEvent.OnDeleteClicked->{
+                viewModelScope.launch {
+                    dao.deleteExpense(event.item)
+                }
+
+            }
+            is HomeUiEvent.OnEditClicked->{
+                viewModelScope.launch {
+
+                    if(event.item.type == "Income"){
+                        _navigationEvent.emit(
+                            HomeNavigationEvent.NavigateToAddIncome(event.item)
+                        )
+                    }else{
+                        _navigationEvent.emit(
+                            HomeNavigationEvent.NavigateToAddExpense(event.item)
+                        )
+                    }
+
+                }
+
             }
         }
     }
@@ -75,4 +98,8 @@ sealed class HomeUiEvent : UiEvent() {
     data object OnAddExpenseClicked : HomeUiEvent()
     data object OnAddIncomeClicked : HomeUiEvent()
     data object OnSeeAllClicked : HomeUiEvent()
+
+    //NEW
+    data class OnDeleteClicked(val item : ExpenseEntity ) : HomeUiEvent()
+    data class OnEditClicked(val item : ExpenseEntity) : HomeUiEvent()
 }

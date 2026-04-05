@@ -3,6 +3,7 @@ package com.codewithfk.expensetracker.android.data.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.codewithfk.expensetracker.android.data.model.ExpenseEntity
@@ -23,7 +24,7 @@ interface ExpenseDao {
     @Query("SELECT type, date, SUM(amount) AS total_amount FROM expense_table where type = :type GROUP BY type, date ORDER BY date")
     fun getAllExpenseByDate(type: String = "Expense"): Flow<List<ExpenseSummary>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExpense(expenseEntity: ExpenseEntity)
 
     @Delete
