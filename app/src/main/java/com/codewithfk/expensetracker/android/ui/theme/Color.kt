@@ -22,13 +22,23 @@ val White80 = Color(0xCCFFFFFF)
 val Red = Color(0xFFFF0000)
 val Green = Color(0xFF00FF00)
 
+val topbarDay = Color(0xFFD9D6D6)
+val topbarNight = Color(0xFF333232)
+
+val dialogColor = Color(0xFFF3F0F0)
+val dialogColorDark = Color(0xFF313030)
+
+
 sealed class ThemeColors(
     val background: Color,
     val surface: Color,
     val primary: Color,
     val secondary: Color,
     val tertiary: Color,
-    val text: Color
+    val text: Color,
+    val topBar :Color,
+    val DialogBg:Color
+
 ) {
     data object Night : ThemeColors(
         background = Navy,
@@ -36,7 +46,10 @@ sealed class ThemeColors(
         primary = Zinc,
         secondary = Indigo,
         tertiary = Amethyst,
-        text = White
+        text = White,
+        topBar =topbarNight,
+        DialogBg=dialogColorDark
+
     )
 
     data object Day : ThemeColors(
@@ -45,6 +58,8 @@ sealed class ThemeColors(
         primary = Zinc,
         secondary = PurpleGrey40,
         tertiary = Pink40,
-        text = Color.Black
+        text = Color.Black,
+        topBar = topbarDay,
+        DialogBg = dialogColor
     )
 }

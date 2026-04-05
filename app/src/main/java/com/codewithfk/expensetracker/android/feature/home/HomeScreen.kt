@@ -106,7 +106,7 @@ fun HomeScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFF8F9FB)
+        color = MaterialTheme.colorScheme.onSurface
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
@@ -116,7 +116,7 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant)
                     .padding(horizontal = 16.dp, vertical = 20.dp)
                     .constrainAs(topBar) {
                         top.linkTo(parent.top)
@@ -134,31 +134,31 @@ fun HomeScreen(
                         ExpenseTextView(
                             text = "WalletWise",
                             style = Typography.titleLarge,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
                         ExpenseTextView(
                             text = "Keep daily track your expense",
                             style = Typography.bodyMedium,
-                            color = LightGrey
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFFF2F2F2)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_notification),
-                            contentDescription = null,
-                            tint = Color.Black,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+//                    Box(
+//                        modifier = Modifier
+//                            .size(40.dp)
+//                            .clip(RoundedCornerShape(12.dp))
+//                            .background(Color(0xFFF2F2F2)),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Icon(
+//                            painter = painterResource(id = R.drawable.ic_notification),
+//                            contentDescription = null,
+//                            tint = Color.Black,
+//                            modifier = Modifier.size(20.dp)
+//                        )
+//                    }
                 }
             }
 
@@ -437,7 +437,8 @@ fun TransactionItem(
             )
             Spacer(modifier = Modifier.size(8.dp))
             Column {
-                ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium,
+                    color=MaterialTheme.colorScheme.onPrimary)
                 Spacer(modifier = Modifier.size(6.dp))
                 ExpenseTextView(text = date, fontSize = 13.sp, color = LightGrey)
             }
@@ -459,6 +460,7 @@ fun TransactionItem(
             Icon(
                 painter = painterResource(id = R.drawable.dots_menu),
                 contentDescription = null,
+                tint= MaterialTheme.colorScheme.onPrimary,
                 modifier= Modifier.size(20.dp)
                     .clickable{expanded = true}
             )
@@ -468,7 +470,8 @@ fun TransactionItem(
                 onDismissRequest = {expanded = false}
             ) {
                 DropdownMenuItem(
-                    text = {Text("Edit")},
+                    text = {Text("Edit",
+                        color = MaterialTheme.colorScheme.onPrimary)},
                     onClick = {
                         expanded = false
                         onEditClick()
@@ -477,7 +480,8 @@ fun TransactionItem(
                 )
 
                 DropdownMenuItem(
-                    text = {Text("Delete")},
+                    text = {Text("Delete",
+                        color = MaterialTheme.colorScheme.onPrimary)},
                     onClick = {
                         expanded = false
                         onDeleteClick()
@@ -511,7 +515,7 @@ fun CardItem(
             shape = RoundedCornerShape(20.dp),
             tonalElevation = 6.dp,
             shadowElevation = 6.dp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.background,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
@@ -523,13 +527,13 @@ fun CardItem(
                 ExpenseTextView(
                     text = "Total Balance",
                     style = Typography.bodyMedium,
-                    color = LightGrey
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 ExpenseTextView(
                     text = balance,
                     style = Typography.headlineLarge,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -547,7 +551,7 @@ fun CardItem(
                 shape = RoundedCornerShape(20.dp),
                 tonalElevation = 6.dp,
                 shadowElevation = 6.dp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 modifier = Modifier
                     .weight(1f)
                     .height(120.dp)
@@ -566,7 +570,7 @@ fun CardItem(
                         ExpenseTextView(
                             text = "Income",
                             style = Typography.bodyMedium,
-                            color = LightGrey
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
 
@@ -575,7 +579,7 @@ fun CardItem(
                     ExpenseTextView(
                         text = income,
                         style = Typography.titleLarge,
-                        color = Green
+                        color =MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -585,7 +589,7 @@ fun CardItem(
                 shape = RoundedCornerShape(20.dp),
                 tonalElevation = 6.dp,
                 shadowElevation = 6.dp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 modifier = Modifier
                     .weight(1f)
                     .height(120.dp)
@@ -604,7 +608,7 @@ fun CardItem(
                         ExpenseTextView(
                             text = "Expense",
                             style = Typography.bodyMedium,
-                            color = LightGrey
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
 
@@ -613,7 +617,7 @@ fun CardItem(
                     ExpenseTextView(
                         text = expense,
                         style = Typography.titleLarge,
-                        color = Red
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -136,38 +137,38 @@ fun AddExpense(
                         .padding(16.dp)
                         .align(Alignment.Center)
                 )
-                Box(modifier = Modifier.align(Alignment.CenterEnd)) {
-                    Image(
-                        painter = painterResource(id = R.drawable.dots_menu),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .clickable {
-                                viewModel.onEvent(AddExpenseUiEvent.OnMenuClicked)
-                            }
-                    )
-                    DropdownMenu(
-                        expanded = menuExpanded.value,
-                        onDismissRequest = { menuExpanded.value = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { ExpenseTextView(text = "Profile") },
-                            onClick = {
-                                menuExpanded.value = false
-                                // Navigate to profile screen
-                                // navController.navigate("profile_route")
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { ExpenseTextView(text = "Settings") },
-                            onClick = {
-                                menuExpanded.value = false
-                                // Navigate to settings screen
-                                // navController.navigate("settings_route")
-                            }
-                        )
-                    }
-                }
+//                Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.dots_menu),
+//                        contentDescription = null,
+//                        modifier = Modifier
+//                            .align(Alignment.CenterEnd)
+//                            .clickable {
+//                                viewModel.onEvent(AddExpenseUiEvent.OnMenuClicked)
+//                            }
+//                    )
+//                    DropdownMenu(
+//                        expanded = menuExpanded.value,
+//                        onDismissRequest = { menuExpanded.value = false }
+//                    ) {
+//                        DropdownMenuItem(
+//                            text = { ExpenseTextView(text = "Profile") },
+//                            onClick = {
+//                                menuExpanded.value = false
+//                                // Navigate to profile screen
+//                                // navController.navigate("profile_route")
+//                            }
+//                        )
+//                        DropdownMenuItem(
+//                            text = { ExpenseTextView(text = "Settings") },
+//                            onClick = {
+//                                menuExpanded.value = false
+//                                // Navigate to settings screen
+//                                // navController.navigate("settings_route")
+//                            }
+//                        )
+//                    }
+//                }
 
             }
             DataForm(modifier = Modifier.constrainAs(card) {
@@ -259,7 +260,7 @@ fun DataForm(
             .clip(
                 RoundedCornerShape(16.dp)
             )
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
@@ -306,17 +307,19 @@ fun DataForm(
                 newValue ->
                 notes.value = newValue
             },
-            textStyle = TextStyle(color = Color.Black),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
 
             modifier = Modifier.fillMaxWidth(),
 
             placeholder = { ExpenseTextView(text = "Enter Description") },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                disabledBorderColor = Color.Black, disabledTextColor = Color.Black,
-                disabledPlaceholderColor = Color.Black,
-                focusedTextColor = Color.Black,
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                disabledTextColor = Color.Gray,
+                disabledPlaceholderColor = Color.Gray,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedTextColor = Color.Gray,
             )
         )
         Spacer(modifier = Modifier.size(24.dp))
@@ -327,8 +330,18 @@ fun DataForm(
             onValueChange = { newValue ->
                 amount.value = newValue.filter { it.isDigit() || it == '.' }
             },
-            prefix = { Text("₹ ") },   // ✅ safe
+            prefix = { Text("₹ ", color = MaterialTheme.colorScheme.onPrimary) },   // ✅ safe
+            modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                disabledTextColor = Color.Gray,
+                disabledPlaceholderColor = Color.Gray,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedTextColor = Color.Gray,
+            )
         )
 //        OutlinedTextField(
 //            value = amount.value,
@@ -363,18 +376,24 @@ fun DataForm(
         Spacer(modifier = Modifier.size(24.dp))
         TitleComponent("date")
         OutlinedTextField(value = if (date.longValue == 0L) "" else Utils.formatDateToHumanReadableForm(
-            date.longValue
-        ),
+            date.longValue),
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { dateDialogVisibility.value = true },
             enabled = false,
             colors = OutlinedTextFieldDefaults.colors(
-                disabledBorderColor = Color.Black, disabledTextColor = Color.Black,
-                disabledPlaceholderColor = Color.Black,
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                disabledTextColor = Color.Gray,
+                disabledPlaceholderColor = Color.Gray,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedTextColor = Color.Gray,
             ),
-            placeholder = { ExpenseTextView(text = "Select date") })
+            placeholder = { ExpenseTextView(text = "Select date") },
+
+        )
         Spacer(modifier = Modifier.size(24.dp))
         Button(
             onClick = {
@@ -437,8 +456,25 @@ fun ExpenseDatePickerDialog(
             ExpenseTextView(text = "Cancel")
         }
     }) {
-        DatePicker(state = datePickerState)
+        DatePicker(state = datePickerState,
+            colors = DatePickerDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                headlineContentColor = MaterialTheme.colorScheme.onPrimary,
+                weekdayContentColor = MaterialTheme.colorScheme.onPrimary,
+                subheadContentColor = MaterialTheme.colorScheme.onPrimary,
+                yearContentColor = MaterialTheme.colorScheme.onPrimary,
+                currentYearContentColor = MaterialTheme.colorScheme.onPrimary,
+                selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
+                selectedYearContainerColor = MaterialTheme.colorScheme.onPrimary,
+                dayContentColor = MaterialTheme.colorScheme.onPrimary,
+                selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+                selectedDayContainerColor = MaterialTheme.colorScheme.onPrimary,
+                todayContentColor = MaterialTheme.colorScheme.onPrimary,
+                todayDateBorderColor = MaterialTheme.colorScheme.onPrimary
+            ))
     }
+
 }
 
 @Composable
@@ -447,7 +483,7 @@ fun TitleComponent(title: String) {
         text = title.uppercase(),
         fontSize = 12.sp,
         fontWeight = FontWeight.Medium,
-        color = LightGrey
+        color = MaterialTheme.colorScheme.onPrimary
     )
     Spacer(modifier = Modifier.size(10.dp))
 }
@@ -473,25 +509,27 @@ fun ExpenseDropDown(listOfItems: List<String>,
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(),
-            textStyle = TextStyle(fontFamily = InterFontFamily, color = Color.Black),
+            textStyle = TextStyle(fontFamily = InterFontFamily, color = MaterialTheme.colorScheme.onPrimary),
             readOnly = true,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
             },
             shape = RoundedCornerShape(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                disabledBorderColor = Color.Black, disabledTextColor = Color.Black,
-                disabledPlaceholderColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                disabledTextColor = Color.Gray,
+                disabledPlaceholderColor = Color.Gray,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedTextColor = Color.Gray,
 
             )
         )
         ExposedDropdownMenu(expanded = expanded.value, onDismissRequest = { }) {
             listOfItems.forEach {
-                DropdownMenuItem(text = { ExpenseTextView(text = it) }, onClick = {
+                DropdownMenuItem(text = { ExpenseTextView(text = it,
+                    color = MaterialTheme.colorScheme.onPrimary) }, onClick = {
                     selectedItem.value = it
                     onItemSelected(selectedItem.value)
                     expanded.value = false

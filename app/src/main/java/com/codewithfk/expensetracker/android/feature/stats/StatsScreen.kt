@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,9 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.codewithfk.expensetracker.android.R
+import com.codewithfk.expensetracker.android.base.HomeNavigationEvent
+import com.codewithfk.expensetracker.android.base.NavigationEvent
+import com.codewithfk.expensetracker.android.feature.home.HomeUiEvent
 import com.codewithfk.expensetracker.android.utils.Utils
 import com.codewithfk.expensetracker.android.feature.home.TransactionList
 import com.codewithfk.expensetracker.android.widget.ExpenseTextView
@@ -37,7 +41,32 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineDataSet
 
 @Composable
-fun StatsScreen(navController: NavController, viewModel: StatsViewModel = hiltViewModel()) {
+fun StatsScreen(navController: NavController,
+                viewModel: StatsViewModel = hiltViewModel()) {
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                NavigationEvent.NavigateBack -> navController.popBackStack()
+
+                is HomeNavigationEvent.NavigateToAddIncome -> {
+
+                    navController.currentBackStackEntry?.savedStateHandle?.set("expense",event.item)
+
+                    navController.navigate("/add_income")
+                }
+                is HomeNavigationEvent.NavigateToAddExpense -> {
+                    navController.currentBackStackEntry?.savedStateHandle?.set("expense",
+                        event.item
+                    )
+                    navController.navigate("/add_exp")
+                }
+                else -> {}
+            }
+        }
+    }
+
+
     Scaffold(topBar = {
         Box(
             modifier = Modifier
@@ -79,11 +108,12 @@ fun StatsScreen(navController: NavController, viewModel: StatsViewModel = hiltVi
             TransactionList(Modifier, list = topExpense.value, "Top Spending", onSeeAllClicked = {
 
             },
-                onEditClick = {
+                onEditClick = {item->
+                    viewModel.onEvent(StatsUiEvent.OnEditClicked(item))
 
                 },
-                onDeleteClick = {
-
+                onDeleteClick = {item->
+                    viewModel.onEvent(StatsUiEvent.OnDeleteClicked(item))
                 }
                 )
         }

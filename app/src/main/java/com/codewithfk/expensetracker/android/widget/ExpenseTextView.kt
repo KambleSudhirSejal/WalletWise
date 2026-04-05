@@ -1,6 +1,7 @@
 package com.codewithfk.expensetracker.android.widget
 
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,7 +21,7 @@ import com.codewithfk.expensetracker.android.ui.theme.InterFontFamily
 fun ExpenseTextView(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = Color.Unspecified,
+    color: Color = MaterialTheme.colorScheme.onPrimary,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
