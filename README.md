@@ -33,7 +33,25 @@ Built using **Jetpack Compose** and **MVVM architecture**, the app focuses on cl
 - Clean and minimal design  
 - Modern card-based layout  
 - Smooth animations and interactions  
-- User-friendly input flow  
+- User-friendly input flow
+
+## 📸 Screenshots
+
+### 🌞 Light Theme
+<p align="center">
+  <img src="screenshots/img.png" width="250"/>
+  <img src="screenshots/img_1.png" width="250"/>
+  <img src="screenshots/img_2.png" width="250"/>
+  <img src="screenshots/img_3.png" width="250"/>
+</p>
+
+### 🌙 Dark Theme
+<p align="center">
+  <img src="screenshots/img_4.png" width="250"/>
+  <img src="screenshots/img_5.png" width="250"/>
+  <img src="screenshots/img_6.png" width="250"/>
+  <img src="screenshots/img_7.png" width="250"/>
+</p>
 
 
 
