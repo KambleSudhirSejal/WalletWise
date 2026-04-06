@@ -39,10 +39,10 @@ Built using **Jetpack Compose** and **MVVM architecture**, the app focuses on cl
 
 ### 🌞 Light Theme
 <p align="center">
-  <img src="screenshots/img.png" width="250"/>
-  <img src="screenshots/img_1.png" width="250"/>
-  <img src="screenshots/img_2.png" width="250"/>
-  <img src="screenshots/img_3.png" width="250"/>
+  <img src="screenshots/img.png" width="200"/>
+  <img src="screenshots/img_1.png" width="200"/>
+  <img src="screenshots/img_2.png" width="200"/>
+  <img src="screenshots/img_3.png" width="200"/>
 </p>
 
 ### 🌙 Dark Theme
